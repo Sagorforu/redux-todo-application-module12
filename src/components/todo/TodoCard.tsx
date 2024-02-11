@@ -2,7 +2,8 @@ import { SquarePen, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { useAppDispatch } from "@/redux/hook";
 import { removeTodo } from "@/redux/features/todoSlice";
-import { useUpdateTodoMutation } from "@/redux/api/Api";
+import { useDeleteTodoMutation, useUpdateTodoMutation } from "@/redux/api/Api";
+import UpdateModal from "./UpdateModal";
 
 type TTodoCardProps = {
   _id: string;
@@ -22,6 +23,8 @@ const TodoCard = ({
   const dispatch = useAppDispatch();
 
   const [updateTodo, { isLoading }] = useUpdateTodoMutation();
+  // const [deleteTodo] = useDeleteTodoMutation();
+
   const toggleState = () => {
     const todoData = {
       title,
@@ -74,9 +77,7 @@ const TodoCard = ({
       </div>
       <p className="flex-[2]  mt-2">{description}</p>
       <div className="space-x-3">
-        <Button className="bg-[#5C53FE]">
-          <SquarePen />
-        </Button>
+        <UpdateModal id={_id} />
         <Button
           onClick={() => dispatch(removeTodo(_id))}
           className="bg-red-500"

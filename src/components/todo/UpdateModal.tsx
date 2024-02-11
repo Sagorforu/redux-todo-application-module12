@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +7,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button } from "../ui/button";
+
+import { Input } from "../ui/input";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { FormEvent, useState } from "react";
+import { useUpdateTodoMutation } from "@/redux/api/Api";
 import {
   Select,
   SelectContent,
@@ -15,74 +20,55 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAddTodoMutation } from "@/redux/api/Api";
-// import { addTodo } from "@/redux/features/todoSlice";
-// import { useAppDispatch } from "@/redux/hook";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { FormEvent, useState } from "react";
+} from "../ui/select";
+import { Label } from "../ui/label";
+import { SquarePen } from "lucide-react";
 
-const AddTodoModal = () => {
+const UpdateModal = ({ id }) => {
   const [task, setTask] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("");
-
-  //! for localState management
-  // const dispatch = useAppDispatch();
-
-  //* for server
-  //? [actualFunctionForPost, {data, isLoading, isError}]
-  const [addTodo, { isError, isLoading }] = useAddTodoMutation();
+  const [updateTodo, { isLoading, isError }] = useUpdateTodoMutation();
 
   if (isLoading) {
     return <p>Loading...</p>;
   }
   if (isError) {
-    return <p>Something went wrong, Todo not added</p>;
+    return <p>Something went wrong, data</p>;
   }
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    //! for local state id management
-    // const randomString = Math.random().toString(36).substring(2, 7);
-    // id: randomString
-
     const taskDetails = {
+      id: id,
       title: task,
       description,
       priority,
       isCompleted: false,
     };
-    //! for localState management
-    // dispatch(addTodo(taskDetails));
-
-    //! For server
-    addTodo(taskDetails);
+    console.log(taskDetails);
+    updateTodo(taskDetails);
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-primary-gradient text-xl font-semibold">
-          Add Todo
+        <Button className="bg-[#5C53FE]">
+          <SquarePen />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Task</DialogTitle>
+          <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
-            Add your tasks that you want to finish.
+            Make changes to your profile here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="task" className="text-right">
-                Task
-              </Label>
+              <Label className="text-right">Task</Label>
               <Input
                 onBlur={(e) => setTask(e.target.value)}
                 id="task"
@@ -90,9 +76,7 @@ const AddTodoModal = () => {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
+              <Label className="text-right">Description</Label>
               <Input
                 onBlur={(e) => setDescription(e.target.value)}
                 id="description"
@@ -117,7 +101,7 @@ const AddTodoModal = () => {
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit">Update Todo</Button>
             </DialogClose>
           </DialogFooter>
         </form>
@@ -126,4 +110,4 @@ const AddTodoModal = () => {
   );
 };
 
-export default AddTodoModal;
+export default UpdateModal;
